@@ -114,7 +114,7 @@ def get_already_joined_groups(joined_groups_file, usr, pwd):
 def join_multiple_accounts(group_ids_file, joined_groups_file, fb_accounts_file):
     options = Options()
     options.headless = True
-    DRIVER_PATH = r"drivers/geckodriver.exe"
+    DRIVER_PATH = r"drivers/geckodriver"
     accounts_df = pd.read_csv(fb_accounts_file)
     for _, row in accounts_df.iterrows():
         driver = webdriver.Firefox(executable_path = DRIVER_PATH, options = options)
