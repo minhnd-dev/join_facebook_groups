@@ -82,7 +82,7 @@ def check_joined_from_file(driver, group_ids_file, joined_groups_file):
             f.write(str(group_id) + "\n")
 
 if __name__ == "__main__":
-    DRIVER_PATH = r"drivers\geckodriver"
+    DRIVER_PATH = r"drivers/geckodriver"
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(executable_path = DRIVER_PATH, options = options)
