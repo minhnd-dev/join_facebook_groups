@@ -8,6 +8,8 @@ optional arguments:
 
 
   -h, --help            show this help message and exit
+
+  
   -f FILE, --file FILE  path to file which contains group ids
 
 
