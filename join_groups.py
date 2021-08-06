@@ -17,8 +17,6 @@ def login_fb(driver, usr, pwd):
     print("Logging in")
     driver.get("https://www.facebook.com/")
 
-    print(usr)
-    print(pwd)
     username_box = driver.find_element_by_id('email')
     username_box.send_keys(usr)
 
