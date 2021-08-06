@@ -139,7 +139,7 @@ def join_multiple_accounts(groups_file, fb_accounts_file):
     DRIVER_PATH = r"drivers/geckodriver"
     accounts_df = pd.read_csv(fb_accounts_file)
     for _, row in accounts_df.iterrows():
-        usr, pwd = str(row['user'].strip()), str(row['pw'].strip())
+        usr, pwd = str(row['user']).strip(), str(row['pw']).strip()
         driver = webdriver.Firefox(executable_path = DRIVER_PATH, options = options)
         logged_in = login_fb(driver, usr, pwd)
         if logged_in:
