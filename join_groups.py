@@ -52,12 +52,13 @@ def request_join_group(driver, group_id):
             if x.find("Không thể xử lý yêu cầu của bạn") >= 0 :
                 print(f"Group doesn't exists. Please check group id {group_id}")
             else:
-                print("Can't join group because of exception: ")
+                print(f"Can't join group {group_id} because of exception: ")
                 print(e)
     sleep(1)
 
 def request_join_from_csv(driver, groups_file, usr):
     groups_df = pd.read_csv(groups_file, na_values="")
+    groups_df['group_id'] = groups_df['group_id'].astype(str)
     for _, row in groups_df.iterrows():
         if usr in str(row['joined_accounts']).split(','):
             print(f"Aready joined group {row['group_id']}")
@@ -134,11 +135,11 @@ def get_already_joined_groups(joined_groups_file, usr, pwd):
     return joined_groups
 def join_multiple_accounts(groups_file, fb_accounts_file):
     options = Options()
-    options.headless = True
+    options.headless = False
     DRIVER_PATH = r"drivers/geckodriver"
     accounts_df = pd.read_csv(fb_accounts_file)
     for _, row in accounts_df.iterrows():
-        usr, pwd = row['user'].strip(), row['pw'].strip()
+        usr, pwd = str(row['user'].strip()), str(row['pw'].strip())
         driver = webdriver.Firefox(executable_path = DRIVER_PATH, options = options)
         logged_in = login_fb(driver, usr, pwd)
         if logged_in:
