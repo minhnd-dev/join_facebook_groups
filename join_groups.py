@@ -13,6 +13,13 @@ parser.add_argument('-a','--accountfile',help = "path to csv file which contains
 args = parser.parse_args()
 
 def login_fb(driver, usr, pwd):
+    """
+    Logging in a facebook account given an user name and password
+    Parameters:
+        - driver (selenium web driver object)
+        - usr (string): user name for fb account
+        - pwd (string): password 
+    """
     print("_"*60)
     print("Logging in")
     driver.get("https://www.facebook.com/")
@@ -34,10 +41,21 @@ def login_fb(driver, usr, pwd):
         return False
 
 def request_join_group(driver, group_id):
-    base_url = "https://m.facebook.com/groups/"
+    """
+    Join a facebook group. 
+    ALERT!: This function must be called after calling login_fb()
+    Parameters:
+        - driver (selenium webdriver object)
+        - group_id (string, int): the uid of a facebook group
+    """
 
+    # if found the "Join group" button -> click it
+    # else: 
+    #   check if joined group or if the group exists then print out the log
+    base_url = "https://m.facebook.com/groups/"
     driver.get(base_url + str(group_id))
     sleep(1)
+    
     try:
         join_box = driver.find_element_by_css_selector("button[label='Tham gia nhóm']")
         join_box.click()
@@ -57,6 +75,17 @@ def request_join_group(driver, group_id):
     sleep(1)
 
 def request_join_from_csv(driver, groups_file, usr):
+    """
+    Join a list of groups specified in a csv file. 
+    ALERT!: This function must be called after calling login_fb()
+    The csv must have atleast 3 columns:
+        - group_id (string, int): contains the uid of the groups
+        - joined_accounts (string) : contains the usernames of accounts which joined the groups, separated by comma
+    Parameters:
+        - driver (selenium web driver object)
+        - groups_file (string): path to csv file containing group ids
+        - usr (string): username of the fb account used to join
+    """
     groups_df = pd.read_csv(groups_file, na_values="")
     groups_df['group_id'] = groups_df['group_id'].astype(str)
     for _, row in groups_df.iterrows():
@@ -65,7 +94,13 @@ def request_join_from_csv(driver, groups_file, usr):
             return
         request_join_group(driver, row['group_id'])        
 def check_joined_group(driver, group_id):
-    """Check if joined group or not"""
+    """
+    Return True if joined group, else return False
+    ALERT!: This function must be called after calling login_fb()
+    Parameters:
+        - driver (selenium web driver object)
+        - group_id (string, int): the uid of a facebook group
+    """
 
     base_url = "https://m.facebook.com/groups/"
     driver.get(base_url + str(group_id))
@@ -77,6 +112,23 @@ def check_joined_group(driver, group_id):
         return False
 
 def check_joined_from_csv(driver, groups_file, usr):
+    """
+    Check if joined a list of groups specified in a csv file.
+    ALERT!: This function must be called after calling login_fb()
+    The csv must have atleast 3 columns:
+        - group_id (string, int): contains the uid of the groups
+        - joined_accounts (string) : contains the usernames of accounts which joined the groups, separated by comma
+        - joined (boolean): True if len(joined_accounts) > 0
+    Parameters:
+        - driver (selenium web driver object)
+        - groups_file (string): path to csv file containing group ids
+        - usr (string): username of the fb account used to join
+    """
+
+    #loop through uids
+    #if username already in "joined_groups" column --> skip this uid
+    # --> call check_joined_group
+    # --> write to file if joined
     print("Checking if joined groups...")
     groups_df = pd.read_csv(groups_file)
     groups_df['joined_accounts'] = groups_df['joined_accounts'].astype(str)
@@ -97,10 +149,12 @@ def check_joined_from_csv(driver, groups_file, usr):
         groups_df.at[index, 'joined_accounts'] = ','.join([account for account in joined_accounts])
     groups_df.to_csv(groups_file, index = False)
 def write_unjoined_groups(unjoined_groups, group_ids_file):
+    """USELESS FUNCTION"""
     with open(group_ids_file, 'w') as f:
         for group_id in unjoined_groups:
             f.write(str(group_id) + "\n")
 def write_joined_groups(joined_groups, joined_groups_file, usr, pwd):
+    """USELESS FUNCTION"""
     groups_info = {}
     account = {usr: pwd}
     try:
@@ -120,6 +174,7 @@ def write_joined_groups(joined_groups, joined_groups_file, usr, pwd):
     with open(joined_groups_file, 'w') as f:
         json.dump(groups_info, f)
 def get_already_joined_groups(joined_groups_file, usr, pwd):
+    """USELESS FUNCTION"""
     account = {usr:pwd}
     joined_groups_info = {}
     joined_groups = []
@@ -134,8 +189,21 @@ def get_already_joined_groups(joined_groups_file, usr, pwd):
             joined_groups.append(group_id)   
     return joined_groups
 def join_multiple_accounts(groups_file, fb_accounts_file):
+    """
+    Join groups, check if joined groups with multiple accounts given in a csv file.
+    Groups are specified in a csv file which has at least 3 columns:
+        - group_id (string, int): contains the uid of the groups
+        - joined_accounts (string) : contains the usernames of accounts which joined the groups, separated by comma
+        - joined (boolean): True if len(joined_accounts) > 0
+    Account file has at least 2 columns:
+        - user (string, int): user name of facebook account
+        - pw (string, int): password of the corresponding account
+    Parameters:
+        - groups_file (string): path to csv file containing groups info
+        - fb_accounts_file (string): path to csv file containing user name & password
+    """
     options = Options()
-    options.headless = True
+    options.headless = False
     DRIVER_PATH = r"drivers/geckodriver"
     accounts_df = pd.read_csv(fb_accounts_file)
     for _, row in accounts_df.iterrows():
