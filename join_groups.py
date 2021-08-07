@@ -220,7 +220,7 @@ def join_multiple_accounts(groups_file, fb_accounts_file, mode):
         print("mode == 2: join groups then check if joined")
         return
     options = Options()
-    options.headless = False
+    options.headless = True
     DRIVER_PATH = r"drivers/geckodriver"
     accounts_df = pd.read_csv(fb_accounts_file)
     for _, row in accounts_df.iterrows():

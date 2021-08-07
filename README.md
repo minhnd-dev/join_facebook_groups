@@ -1,7 +1,7 @@
 ## example:
 
 ```
-python join_groups.py -a "fb_accounts.csv"  -f "group_ids.csv"
+python join_groups.py -a "fb_accounts.csv"  -f "group_ids.csv" -m 1
 ```
 
 ## usage:
