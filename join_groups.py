@@ -10,6 +10,7 @@ import argparse
 parser = argparse.ArgumentParser(description="Join facebook groups with ids specified in a file")
 parser.add_argument('-f','--file',help = "path to text file which contains group ids that we need to join")
 parser.add_argument('-a','--accountfile',help = "path to csv file which contains facebook accounts")
+parser.add_argument('-m','--mode', help = "choose working mode: 0 = join, 1 = check join, 2 = join then check join ")
 args = parser.parse_args()
 
 def login_fb(driver, usr, pwd):
@@ -188,7 +189,7 @@ def get_already_joined_groups(joined_groups_file, usr, pwd):
         if account in joined_groups_info[group_id]:
             joined_groups.append(group_id)   
     return joined_groups
-def join_multiple_accounts(groups_file, fb_accounts_file):
+def join_multiple_accounts(groups_file, fb_accounts_file, mode):
     """
     Join groups, check if joined groups with multiple accounts given in a csv file.
     Groups are specified in a csv file which has at least 3 columns:
@@ -201,7 +202,23 @@ def join_multiple_accounts(groups_file, fb_accounts_file):
     Parameters:
         - groups_file (string): path to csv file containing groups info
         - fb_accounts_file (string): path to csv file containing user name & password
+        - mode (int, string):
+            mode == 0: only join groups
+            mode == 1: only check join groups
+            mode == 2: join groups then check join groups
     """
+    if str(mode) == '0':
+        print("***WORKING IN MODE 0: ONLY JOIN GROUPS***")
+    elif str(mode) == '1':
+        print("***WORKING IN MODE 1: ONLY CHECK IF JOINED GROUPS***")
+    elif str(mode) == '2':
+        print("***WORKING IN MODE 2: JOINING GROUPS THEN CHECKING IF JOINED GROUPS***")
+    else:
+        print("Wrong mode! mode parameter only accept 3 values: 0, 1 or 2. Please choose one of the 3 modes:")
+        print("mode == 0: only join groups")
+        print("mode == 1: only check if joined groups")
+        print("mode == 2: join groups then check if joined")
+        return
     options = Options()
     options.headless = False
     DRIVER_PATH = r"drivers/geckodriver"
@@ -211,8 +228,13 @@ def join_multiple_accounts(groups_file, fb_accounts_file):
         driver = webdriver.Firefox(executable_path = DRIVER_PATH, options = options)
         logged_in = login_fb(driver, usr, pwd)
         if logged_in:
-            request_join_from_csv(driver, groups_file, usr)
-            check_joined_from_csv(driver, groups_file, usr)
+            if str(mode) == '0':
+                request_join_from_csv(driver, groups_file, usr)
+            elif str(mode) == '1':
+                check_joined_from_csv(driver, groups_file, usr)
+            elif str(mode) == '2':
+                check_joined_from_csv(driver, groups_file, usr)
+                request_join_from_csv(driver, groups_file, usr)
         driver.close()
 if __name__ == "__main__":
     # options = Options()
@@ -222,5 +244,5 @@ if __name__ == "__main__":
     # logged_in = login_fb(driver, "minh.moc.2000", "dataemgomeer")
     # request_join_from_csv(driver, "test_groups.csv", "minh.moc.2000")
     # driver.close()
-    join_multiple_accounts(fb_accounts_file= args.accountfile, groups_file=args.file)
+    join_multiple_accounts(fb_accounts_file= args.accountfile, groups_file=args.file, mode=args.mode)
     # print("do nothing")
