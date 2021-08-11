@@ -1,2 +1,4 @@
-user,pw
-522160734,matkhau2213
+user,pw,is_checkpointed
+abcxyz,hihi,True
+defghi,word,False
+xzt,pass,False
