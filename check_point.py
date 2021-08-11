@@ -4,6 +4,7 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.firefox.options import Options 
 import argparse
+from datetime import datetime
 
 parser = argparse.ArgumentParser(description="Join facebook groups with ids specified in a file")
 parser.add_argument('-a','--accountfile',help = "path to csv file which contains facebook accounts")
@@ -57,10 +58,13 @@ def check_if_blocked(usr, pwd):
 def check_block_multiple_accounts(fb_accounts_file):
     accounts_df = pd.read_csv(fb_accounts_file)
     is_checkpointed = []
+    check_time = []
     for _, row in accounts_df.iterrows():
         usr, pwd = str(row['user']).strip(), str(row['pw']).strip()
         is_checkpointed.append(check_if_blocked(usr, pwd))
+        check_time.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     accounts_df['is_checkpointed'] = is_checkpointed
+    accounts_df['check_time'] = check_time
     accounts_df.to_csv(fb_accounts_file, index = False)
 if __name__ == "__main__":
     check_block_multiple_accounts(args.accountfile)

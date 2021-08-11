@@ -30,9 +30,10 @@ for _, row in accounts_df.iterrows():
     if row['user'] in account:
         groups_list = account[row['user']]
     account_checkpoint[row['user']] = {
-        "account": row['user'],
+        "account": str(row['user']),
         "is_checkpoint": row['is_checkpointed'],
-        "joined_groups": groups_list
+        "joined_groups": groups_list,
+        "check_time": row['check_time']
     }
 
 actions = []
