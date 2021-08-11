@@ -17,8 +17,8 @@ for _, row in groups_df.iterrows():
         if acc == "":
             continue
         if acc in account:
-            if row['group_id'] not in account[acc]:
-                account[acc].append(row['group_id'])
+            if str(row['group_id']) not in account[acc]:
+                account[acc].append(str(row['group_id']))
         else:
             account[acc] =[row['group_id']]
 # add new account to elasticsearch
@@ -32,7 +32,7 @@ for _, row in accounts_df.iterrows():
     account_checkpoint[row['user']] = {
         "account": row['user'],
         "is_checkpoint": row['is_checkpointed'],
-        "group_ids": groups_list
+        "joined_groups": groups_list
     }
 
 actions = []
